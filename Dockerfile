@@ -1,26 +1,14 @@
-FROM jboss-ex180
-MAINTAINER Chandra Prakash < cprakash@qcsdclabs.com >
-LABEL description="EX180 exam setup"
+FROM ubi7/ubi:7.7
+MAINTAINER Chandra Prakash <cprakash@qcsdclabs.com>
+LABEL description="A basic Apache container on RHEL 7 UBI"
+RUN yum install -y httpd && \
+    yum install java -y && \
+    yum install unzip -y && \
+    yum clean all
 
+RUN echo "Hello from Dockerfile" > /usr/share/httpd/noindex/index.html
 
-COPY jboss7-eap.zip /opt/jboss7-ex180/jboss7-eap.zip 
+EXPOSE 80
 
+ENTRYPOINT ["httpd", "-D", "FOREGROUND"]
 
-RUN chown -R jboss:jboss /opt/jboss7-ex180  && \
-    chmod -R 755 /opt/jboss7-ex180
-
-
-#CMD ["/opt/jboss/jboss-7.2/useradd.sh admin redhat123!"]
-CMD ["/opt/jboss7-ex180/jboss7-eap/bin/add-user.sh -u chandra redhat"]
-
-# Environment
-ENV JBOSS_HOME /opt/jboss7-ex180/jboss7-eap
-
-#USER jboss
-USER jboss
-
-#Port expose 
-EXPOSE 80 8080 9990 9999
-
-#CMD ["JBOSS_HOME/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "bmanagement", "0.0.0.0"]
-CMD ["/opt/jboss7-ex180/jboss7-eap/bin/standalone.sh", "-b", "0.0.0.0"]
